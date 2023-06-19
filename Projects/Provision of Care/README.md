@@ -10,6 +10,18 @@ standardised rate adjusts the raw rates in 2021 using direct
 age-standardisation and with the 2011 population as the baseline age
 structure.
 
+
 <div style="width: 100%;">
-  <img src="Example Output/Table1.svg" style="width: 100%;" alt="Click to see the source">
+
+<img src="Example Output/Table1.svg" style="width: 100%;" alt="Click to see the source">
+
+</div>
+
+
+Here are the rates plotted out:
+
+<div style="width: 100%;">
+
+<img src="Example Output/Age-Standardised Provision of Unpaid Care Rates.png" style="width: 100%;" alt="Click to see the source">
+
 </div>
