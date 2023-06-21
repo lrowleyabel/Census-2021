@@ -1,0 +1,64 @@
+---
+title: "Calculation of 2021 Age-Standardised Caring Rate"
+output:
+  html_document:
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+In order to analyse changes in the rate of people providing unpaid between 2011 and 2021 while also taking account of changes in the age-structure of the population, we can calculate an 'age-standardised caring rate'. This is looks at whether we have greater or fewer carers than we would expect if we applied the age-specific caring rates from 2011 to the 2021 population. The below shows how this is calculated.
+
+<br>
+
+### Step 1: Calculate 2011 Age-Specific Caring Rates
+
+The below table splits the 2011 population into age groups and shows the count of unpaid carers in each group according to the 2011 census. From this we calculate the age-specific caring rate for 2011.
+
+```{r}
+load("../Tables/2011 Age-Specific Caring Rates.Rda")
+tbl2
+```
+
+<br>
+
+### Step 2: Apply the 2011 Age-Specific Caring Rates to the 2021 Population
+
+The below table splits the 2021 population into age groups and then applies the 2011 age-specific rates (from Step 1) to those groups in order to get the number of carers we would expect in each group in 2021 if the 2011 rates still applied.
+
+```{r}
+load("../Tables/2021 Expected Count of Carers.Rda")
+tbl3
+```
+
+<br>
+
+### Step 3: Calculate Ratio of Observed to Expected Count of Carers
+
+We can then divide the actual number of unpaid carers in 2021 (as measured in the census) to the expected number of carers calculated in Step 2. This ratio is the age-standardised caring rate.
+
+$$
+\begin{aligned}
+Age\text-standardised\;caring\;rate& = \frac{Observed\;2021\;Count}{Expected\;2021\;Count}\\\\
+&= \frac{4988509}{6388242}\\\\
+&= 0.781
+\end{aligned}
+$$
+
+We can interpret the above as meaning that for every one carer in 2011, we are seeing 0.781 carers in 2021.
+
+The below table sumamrises the raw rates of providing unpaid care in 2011 and 2021 and the age-standardised 2021 rate. It also shows these figures for carers separated by the number of hours they are providing each week in order to show how the pattern changes according to intensity of care-giving.
+
+```{r}
+load("../Tables/Raw and Age-Standardised Unpaid Caring Rates in 2011 and 2021.Rda")
+tbl1
+```
+<br>
+
+Looking just at the raw rates, we see a reduction of 2.12% in the overall proportion of the population providing unpaid care. However there habe been slight increases in the raw proportion of people providing larger amounts of care (ie: more than 20 hours per week).
+
+When we take the underlying ageing of the population into account through age standardisation, the picture remains generally the same - while the overall rate has gone down, when looking at those providing large amounts of care, the rate has either increased or stayed the same. For carers providing 20 - 49 hours, the rate has gone up - for every one carer in 2011 we are seeing 1.22 carers in 2021. For carers providing over 50 hours, the rate has stayed aproximately equal. The decrease in the overall rate is therefore being driven by a reduction in the rate of people providing less than 20 hours of care, which has seen a 39% decrease.
+
+The general picture then is that overall rates of caring have gone down but rates for people providing large amounts of care have increased slightly.
