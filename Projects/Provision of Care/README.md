@@ -6,9 +6,10 @@ This project looks at who is providing unpaid care in 2021 according to the Engl
 ### Workflow:
 
   - Step 1: Calculate raw proportions and age-standardised rates of provision of unpaid care in 2021 and 2011 in England and Wales: [provision_of_unpaid_care_rates_indirect_standardisation.R](Analysis/provision_of_unpaid_care_rates_indirect_standardisation.R)
-  - Step 2: Calculate age-standardised rates across socio-demographic subpopulations in England and Wales
-  - Step 3: Calculate age-standardised rate in 2021 for each LSOA
-  - Step 4: Model the LSOA age-standardised rates
+  - Step 2: Calculate rates for 2021 across socio-demographic subpopulations in England and Wales
+  - Step 3: Calculate change between 2011 and 2021 in rates across socio-demographic subpopulations in England and Wales
+  - Step 4: Calculate age-standardised rate in 2021 for each LSOA
+  - Step 5: Model the LSOA age-standardised rates
 
 
 ### Step 1: Overall Provision of Unpaid Care Rates
