@@ -61,7 +61,9 @@ thm<-  ggthemes::theme_fivethirtyeight()+
     plot.caption.position = "plot",
     plot.caption = element_text(hjust = 0),
     panel.grid.minor = element_line(color = "#D2D2D2"),
-    strip.text = element_text(face = "bold"))
+    strip.text = element_text(face = "bold"),
+    legend.title = element_text(size = rel(0.9)),
+    legend.text = element_text(size = rel(0.9)))
 
 pal<- wesanderson::wes_palette("GrandBudapest1")
 
@@ -91,7 +93,7 @@ total_population_age_sex_21%>%
   population_pyramid(count = n, age = age, side = sex, left = "Male", reference_indicator = care, reference_population = "General population", proportions = T, linewidth = 0.5, width = 0.75, reference_point_linewidth = 0.5, reference_point_size = 2)+
   thm+
   theme(legend.box = "horizontal")+
-  labs(x = "Proportion (%)", title = "Age-Sex Structure of Unpaid Carers Compared to General Population: 2021", caption = "Souce: Enlgand and Wales Census 2021")
+  labs(x = "Proportion (%)", title = "Age-Sex Structure of Unpaid Carers Compared to General Population: 2021", subtitle = "Bars are each age-sex group's proportion within unpaid carers. Circles are each age-sex group's proportion within general population.", caption = "Souce: Enlgand and Wales Census 2021")
 
 ggsave("Plots/Age-Sex Structure of Unpaid Carers Compared to General Population 2021.png", unit = "in", height = 5, width = 9, dpi = 1000)
 
@@ -305,3 +307,7 @@ df_total_ethnicity_21%>%
     labs(x = "Age-Standardised Caring Rate", title = "Age-Standardised Caring Rate by Ethnicity: 2021", subtitle = "Rates indirectly standardised to the 2021 England and Wales general population", caption = "Source: England and Wales Census 2021")
 
 ggsave("Plots/Age-Standardised Caring Rates by Ethnicity 2021.png", units = "in", width = 9, height = 5, dpi = 1000)
+
+
+
+

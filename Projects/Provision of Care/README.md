@@ -34,11 +34,19 @@ In order to account for the underlying change in the population's age structure 
 
 ### Step 2: Provision of Unpaid Care Rates by Subpopulation
 
-The below plot shows the raw proportion of men and women in each age group providing unpaid care. The heavy skew towards women taking on this work is clearly visible.
+The below plot shows the raw proportion of men and women in each age group providing unpaid care. The heavy skew towards women taking on this work is visible, particularly in middle age. The higher proportion for the oldest men compared to the oldest women is in part driven by the fact that the male population over 85 is smaller than the female population - this can be seen in the second plot below, which compared the age-sex structure of the unpaid carer population with the general population.
 
 <div style="width: 100%; padding-top: 10px;">
 
 <img src="Analysis/Plots/Proportion Providing Unpaid Care by Age and Sex 2021.png" style="width: 100%;" alt="Click to see the source">
+
+</div>
+
+<br>
+
+<div style="width: 100%; padding-top: 10px;">
+
+<img src="Analysis/Plots/Age-Sex Structure of Unpaid Carers Compared to General Population 2021.png" style="width: 100%;" alt="Click to see the source">
 
 </div>
 
