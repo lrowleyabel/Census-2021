@@ -5,8 +5,11 @@ This project looks at who is providing unpaid care in 2021 according to the Engl
 
 ### Workflow:
 
-  - Step 1: Calculate raw proportions and age-standardised rates of provision of unpaid care in 2021 and 2011 in England and Wales: [provision_of_unpaid_care_rates_indirect_standardisation.R](Analysis/provision_of_unpaid_care_rates_indirect_standardisation.R)
-  - Step 2: Calculate rates for 2021 across socio-demographic subpopulations in England and Wales: [unpaid_carer_demographic_profile.R](Analysis/unpaid_carer_demographic_profile.R)
+  - Step 1: Calculate raw proportions and age-standardised rates of provision of unpaid care in 2021 and 2011 in England and Wales:
+    - [provision_of_unpaid_care_rates_indirect_standardisation.R](Analysis/provision_of_unpaid_care_rates_indirect_standardisation.R)
+  - Step 2: Calculate rates for 2021 across socio-demographic subpopulations in England and Wales:
+    - [unpaid_carer_demographic_profile.R](Analysis/unpaid_carer_demographic_profile.R)
+    - [unpaid_carer_socioeconomic_profile.R](Analysis/unpaid_carer_socioeconomic_profile.R)
   - Step 3: Calculate change between 2011 and 2021 in rates across socio-demographic subpopulations in England and Wales
   - Step 4: Calculate age-standardised rate in 2021 for each LSOA
   - Step 5: Model the LSOA age-standardised rates
@@ -52,12 +55,10 @@ The below plot shows the raw proportion of men and women in each age group provi
 
 <br>
 
-The below plot shows the age-standardised caring rates for different ethnic groups. Age-standardised rates are used due to the significant differences in the age structure of different ethnic populations.
+The below plots shows the age-standardised caring rates across various socio-demographic variables.
 
 <div style="width: 100%; padding-top: 10px;">
 
-<img src="Analysis/Plots/Age-Standardised Caring Rates by Ethnicity 2021.png" style="width: 100%;" alt="Click to see the source">
+<img src="Analysis/Plots/Age-Standardised Caring Rates across Socio-Demographic Variables 2021.png" style="width: 100%;" alt="Click to see the source">
 
 </div>
-
-<br>

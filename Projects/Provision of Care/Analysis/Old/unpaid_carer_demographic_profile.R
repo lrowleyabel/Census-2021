@@ -177,25 +177,25 @@ ggsave("Plots/Proportion Providing Unpaid Care by Sex 2021.png", unit = "in", wi
 
 
 # Read in care by ethnicity data
-df_ethnicity_21<- read.csv("../../../Data/2021/EW Data/EW_provision_of_unpaid_care_by_ethnicity_2021_data.csv")
+df_hours_ethnicity_21<- read.csv("../../../Data/2021/EW Data/EW_provision_of_unpaid_care_by_ethnicity_2021_data.csv")
 
 # Select and rename relevant variables
-df_ethnicity_21<- df_ethnicity_21%>%
+df_hours_ethnicity_21<- df_hours_ethnicity_21%>%
   select(Ethnic.group..20.categories., Unpaid.care..5.categories., Observation)%>%
   rename(ethnicity = Ethnic.group..20.categories.,
          care = Unpaid.care..5.categories.,
          n = Observation)
 
 # Filter out "Does not apply" ethnicity category
-df_ethnicity_21<- df_ethnicity_21%>%
+df_hours_ethnicity_21<- df_hours_ethnicity_21%>%
   filter(ethnicity != "Does not apply")
 
 # Simplify ethnicity categories
-df_ethnicity_21<- df_ethnicity_21%>%
+df_hours_ethnicity_21<- df_hours_ethnicity_21%>%
   mutate(ethnicity = str_extract(ethnicity, "(?<=: ).*"))
 
 # Merge "Does not apply" and "Provides no unpaid care" categories
-df_ethnicity_21<- df_ethnicity_21%>%
+df_hours_ethnicity_21<- df_hours_ethnicity_21%>%
   mutate(care = case_when(care == "Does not apply" ~ "Provides no unpaid care",
                           T ~ care))%>%
   group_by(care, ethnicity)%>%
@@ -203,7 +203,7 @@ df_ethnicity_21<- df_ethnicity_21%>%
   ungroup()
 
 # Calculate overall counts of people providing any amount of care
-df_total_ethnicity_21<- df_ethnicity_21%>%
+df_total_ethnicity_21<- df_hours_ethnicity_21%>%
   mutate(care = case_when(care != "Provides no unpaid care" ~ "Provides unpaid care",
                           T ~ care))%>%
   group_by(care, ethnicity)%>%
@@ -218,8 +218,12 @@ total_population_ethnicity_21<- df_total_ethnicity_21%>%
 
 # Calculate proportion of each ethnic group providing care
 df_total_ethnicity_21<- left_join(df_total_ethnicity_21, total_population_ethnicity_21, by = "ethnicity")
+df_hours_ethnicity_21<- left_join(df_hours_ethnicity_21, total_population_ethnicity_21, by = "ethnicity")
 
 df_total_ethnicity_21<- df_total_ethnicity_21%>%
+  mutate(proportion = 100*n/total_population)
+
+df_hours_ethnicity_21<- df_hours_ethnicity_21%>%
   mutate(proportion = 100*n/total_population)
 
 # Plot proportions by ethnicity
@@ -239,34 +243,14 @@ ggsave("Plots/Proportion Providing Unpaid Care by Ethnicity 2021.png", unit = "i
 
 # Calculate age-standardised rates for each ethnic group, using indirect standardisation with the general population in 2021 as the baseline
 
-# Read in age-specific count of carers for general population
-standard_counts<- read.csv("../../../Data/2021/EW Data/EW_provision_of_unpaid_care_by_single_year_of_age_2021_data.csv")
+# Calculate age-sepcific rates for general population
+df_total_age_21<- df_total_age_sex_21%>%
+  group_by(care, age)%>%
+  summarise(n = sum(n, na.rm = T), total_population = sum(total_population, na.rm = T))%>%
+  ungroup()
 
-# Select and rename relevant variables
-standard_counts<- standard_counts%>%
-  select(Age..101.categories., Unpaid.care..5.categories., Observation)%>%
-  rename(age = Age..101.categories.,
-         care = Unpaid.care..5.categories.,
-         n = Observation)
-
-# Merge the "Does not apply" and "Provides no unpaid care" categories
-standard_counts<- standard_counts%>%
-  mutate(care = case_when(care == "Does not apply" ~ "Provides no unpaid care",
-                          T ~ care))
-
-# Read in the age-specific population sizes for general population
-standard_age_population<- read.csv("../../../Data/2021/EW Data/EW_age_group_2021_data.csv")
-
-# Select and rename relevant variables
-standard_age_population<- standard_age_population%>%
-  select(Age..18.categories., Observation)%>%
-  rename(age = Age..18.categories.,
-         total = Observation)
-
-# Collapse the age groups in the general population carer counts to the same as those in the population sizes data
-standard_counts<- standard_counts%>%
-  mutate(age = collapse_age_groups(age, unique(standard_age_population$age)))
-
+df_total_age_21<- df_total_age_21%>%
+  mutate(age_specific_general_population_rate = 100*n/total_population)
 
 # Read in age group populations by ethnicity
 total_population_ethnicity_age_21<- read.csv("../../../Data/2021/EW Data/EW_ethnicity_by_age_group_2021_data.csv")
@@ -276,32 +260,54 @@ total_population_ethnicity_age_21<- total_population_ethnicity_age_21%>%
   select(Ethnic.group..20.categories., Age..18.categories. , Observation)%>%
   rename(ethnicity = Ethnic.group..20.categories.,
          age = Age..18.categories.,
-         total = Observation)
+         n = Observation)
 
+total_population_ethnicity_age_21<- total_population_ethnicity_age_21%>%
+  filter(ethnicity != "Does not apply")
 
 # Simplify ethnicity categories
 total_population_ethnicity_age_21<- total_population_ethnicity_age_21%>%
   mutate(ethnicity = str_extract(ethnicity, "(?<=: ).*"))
 
+# Rename ethnicity age group count variable
+total_population_ethnicity_age_21<- total_population_ethnicity_age_21%>%
+  rename(ethnicity_age_group_population = n)
 
-# Calculate age-standardised rat
-ethnicity_rates<- age_standardise_indirect(interest_counts = df_ethnicity_21, interest_age_specific_population = total_population_ethnicity_age_21, standard_age_specific_counts = standard_counts, standard_age_specific_population = standard_age_population, count_variable = n, population_variable = total, age_variable = age, interest_grouping_variable = ethnicity, sum_counts_across = care, exclude_counts = "Provides no unpaid care")
+# Join ethnicity age group populations to age-specific general population rates 
+df_expected_ethnicity_age_21<- left_join(total_population_ethnicity_age_21, df_total_age_21%>%
+                                                filter(care == "Provides unpaid care")%>%
+                                                select(age, age_specific_general_population_rate), by = "age")
+
+# Calculate expected ethnicity age group count based on general population rates
+df_expected_ethnicity_age_21<- df_expected_ethnicity_age_21%>%
+  mutate(expected_count = age_specific_general_population_rate*ethnicity_age_group_population/100)
+
+# Calculate total expected ethnicity count
+df_expected_ethnicity_21<- df_expected_ethnicity_age_21%>%
+  group_by(ethnicity)%>%
+  summarise(expected_count = sum(expected_count, na.rm = T))%>%
+  ungroup()
+
+# Join expected ethnicity counts to observed ethnicity counts
+df_total_ethnicity_21<- left_join(df_total_ethnicity_21%>%
+                                    filter(care == "Provides unpaid care"), df_expected_ethnicity_21, by = "ethnicity")
+
+# Calculate observed count/expected count (ie:indirectly age-standardised caring rate for each ethnicity)
+df_total_ethnicity_21<- df_total_ethnicity_21%>%
+  mutate(age_standardised_rate = n/expected_count)
 
 # Plot age-standardised rate by ethnicity
-p<- ethnicity_rates%>%
+df_total_ethnicity_21%>%
   mutate(ethnicity = forcats::fct_reorder(ethnicity, age_standardised_rate))%>%
   ggplot()+
     geom_segment(aes(x = 1, xend = age_standardised_rate, y = ethnicity, yend = ethnicity))+
     geom_vline(aes(xintercept = 1), linetype=2)+
     geom_point(aes(x = age_standardised_rate, y = ethnicity), shape = 21, fill = pal[1], size = 3)+
-    scale_x_continuous(limits = c(0.38,1.62), breaks = seq(0.4,1.6,0.2))+
     thm+
     labs(x = "Age-Standardised Caring Rate", title = "Age-Standardised Caring Rate by Ethnicity: 2021", subtitle = "Rates indirectly standardised to the 2021 England and Wales general population", caption = "Source: England and Wales Census 2021")
 
-ggsave(plot = p, "Plots/Age-Standardised Caring Rates by Ethnicity 2021.png", units = "in", width = 9, height = 5, dpi = 1000)
+ggsave("Plots/Age-Standardised Caring Rates by Ethnicity 2021.png", units = "in", width = 9, height = 5, dpi = 1000)
 
-save(p, file = "Plots/GGPlot Object Age-Standardised Caring Rates by Ethnicity 2021.Rda")
-
-save(ethnicity_rates, file = "Rates Data/Ethnicity 2021 Rates.Rda")
+save(df_total_ethnicity_21, file = "Previous Ethnicity Age-Standardised Rates.Rda")
 
 
