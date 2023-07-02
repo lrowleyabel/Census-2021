@@ -65,19 +65,43 @@ df_nssec_21<- df_nssec_21%>%
   select(nssec, care, n)
 
 # Read in age-specific populations sizes for each NS-SEC
-total_population_nssec_21<- read.csv("../../../Data/2021/EW Data/EW_NSSEC_by_age_group_2021_data.csv")
+total_population_nssec_age_21<- read.csv("../../../Data/2021/EW Data/EW_NSSEC_by_age_group_2021_data.csv")
 
 # Select and rename relevant variables
-total_population_nssec_21<- total_population_nssec_21%>%
+total_population_nssec_age_21<- total_population_nssec_age_21%>%
   rename(nssec = National.Statistics.Socio.economic.Classification..NS.SeC...10.categories.,
          age = Age..18.categories.,
          total = Observation)%>%
   select(nssec, age, total)
 
-# Calculate age-standardised rates
-nssec_rates<- age_standardise_indirect(interest_counts = df_nssec_21, interest_age_specific_population = total_population_nssec_21, standard_age_specific_counts = standard_counts, standard_age_specific_population = standard_age_population, count_variable = n, population_variable = total, age_variable = age, interest_grouping_variable = nssec, sum_counts_across = care, exclude_counts = "Provides no unpaid care")
 
-# Plot rates by NS-SEC
+# Calculate total population sizes for each NS-SEC
+total_population_nssec_21<- total_population_nssec_age_21%>%
+  group_by(nssec)%>%
+  summarise(total = sum(total, na.rm = T))%>%
+  ungroup()
+
+# Calculate raw proportion providing care by NS-SEC
+df_nssec_21<- left_join(df_nssec_21, total_population_nssec_21, by = "nssec")
+
+df_nssec_21<- df_nssec_21%>%
+  mutate(proportion = 100*n/total)
+
+nssec_rates<- df_nssec_21%>%
+  group_by(nssec)%>%
+  filter(!care %in% c("Does not apply", "Provides no unpaid care"))%>%
+  summarise(proportion = sum(proportion, na.rm = T))%>%
+  ungroup()
+
+# Calculate age-standardised rates
+nssec_age_standardised_rates<- age_standardise_indirect(interest_counts = df_nssec_21, interest_age_specific_population = total_population_nssec_age_21, standard_age_specific_counts = standard_counts, standard_age_specific_population = standard_age_population, count_variable = n, population_variable = total, age_variable = age, interest_grouping_variable = nssec, sum_counts_across = care, exclude_counts = "Provides no unpaid care")
+
+# Join age-standardised rates to raw rates
+nssec_rates<- left_join(nssec_rates, nssec_age_standardised_rates, by = "nssec")%>%
+  select(nssec, n, proportion, age_standardised_rate)
+
+
+# Plot age-standardised rates by NS-SEC
 
 # Set default theme and colour palette
 thm<-  ggthemes::theme_fivethirtyeight()+
@@ -115,6 +139,7 @@ p1<- nssec_rates%>%
 
 ggsave(plot = p1, filename = "Plots/Age-Standardised Caring Rates by NSSEC 2021.png", units = "in", width = 9, height = 5, dpi = 1000)
 
+# Save NS-SEC rates
 save(nssec_rates, file = "Rates Data/NSSEC 2021 Rates.Rda")
 
 
@@ -132,16 +157,39 @@ df_education_21<- df_education_21%>%
   select(education, care, n)
 
 # Read in age group population sizes by education
-total_population_education_21<- read.csv("../../../Data/2021/EW Data/EW_education_by_age_group_2021_data.csv")
+total_population_education_age_21<- read.csv("../../../Data/2021/EW Data/EW_education_by_age_group_2021_data.csv")
 
 # Rename and select relevant variables
-total_population_education_21<- total_population_education_21%>%
+total_population_education_age_21<- total_population_education_age_21%>%
   rename(education = Highest.level.of.qualification..7.categories.,
          age = Age..18.categories.,
          total = Observation)%>%
   select(education, age, total)
 
-education_rates<- age_standardise_indirect(interest_counts = df_education_21, interest_age_specific_population = total_population_education_21, standard_age_specific_counts = standard_counts, standard_age_specific_population = standard_age_population, count_variable = n, population_variable = total, age_variable = age, interest_grouping_variable = education, sum_counts_across = care, exclude_counts = c("Does not apply", "Provides no unpaid care"))
+# Calculate total population in each education category
+total_population_education_21<- total_population_education_age_21%>%
+  group_by(education)%>%
+  summarise(total = sum(total, na.rm = T))%>%
+  ungroup()
+
+# Calculate raw proportion providing care by education
+df_education_21<- left_join(df_education_21, total_population_education_21, by = "education")
+
+df_education_21<- df_education_21%>%
+  mutate(proportion = 100*n/total)
+
+education_rates<- df_education_21%>%
+  group_by(education)%>%
+  filter(!care %in% c("Does not apply", "Provides no unpaid care"))%>%
+  summarise(proportion = sum(proportion, na.rm = T))%>%
+  ungroup()
+
+# Calculate age-standardised rates by education
+education_age_standardised_rates<- age_standardise_indirect(interest_counts = df_education_21, interest_age_specific_population = total_population_education_age_21, standard_age_specific_counts = standard_counts, standard_age_specific_population = standard_age_population, count_variable = n, population_variable = total, age_variable = age, interest_grouping_variable = education, sum_counts_across = care, exclude_counts = c("Does not apply", "Provides no unpaid care"))
+
+# Join age-standardised and raw rates
+education_rates<- left_join(education_rates, education_age_standardised_rates, by = "education")%>%
+  select(education, n, proportion, age_standardised_rate)
 
 # Simplify education categories
 education_rates<- education_rates%>%
@@ -166,6 +214,7 @@ p2<- education_rates%>%
 
 ggsave(plot = p2, filename = "Plots/Age-Standardised Caring Rates by Education 2021.png", units = "in", width = 9, height = 5, dpi = 1000)
 
+# Save education rates
 save(education_rates, file = "Rates Data/Education 2021 Rates.Rda")
 
 
@@ -196,17 +245,17 @@ df_economic_activity_21<- df_economic_activity_21%>%
   ungroup()
 
 # Read in age group population sizes by economic activity
-total_population_economic_activity_21<- read.csv("../../../Data/2021/EW Data/EW_economic_activity_status_by_age_group_2021_data.csv")
+total_population_economic_activity_age_21<- read.csv("../../../Data/2021/EW Data/EW_economic_activity_status_by_age_group_2021_data.csv")
 
 # Rename and select relevant variables
-total_population_economic_activity_21<- total_population_economic_activity_21%>%
+total_population_economic_activity_age_21<- total_population_economic_activity_age_21%>%
   rename(economic_activity = Economic.activity.status..7.categories.,
          age = Age..18.categories.,
          total = Observation)%>%
   select(economic_activity, age, total)
 
-# Simplfy activity categories
-total_population_economic_activity_21<- total_population_economic_activity_21%>%
+# Simplify activity categories
+total_population_economic_activity_age_21<- total_population_economic_activity_age_21%>%
   mutate(economic_activity = case_when(economic_activity == "Economically active (excluding full-time students): In employment" ~ "Employed",
                                        economic_activity == "Economically active (excluding full-time students): Unemployed: Seeking work or waiting to start a job already obtained: Available to start working within 2 weeks" ~ "Unemployed",
                                        economic_activity == "Economically active and a full-time student: In employment" ~ "Full-time student",
@@ -218,10 +267,30 @@ total_population_economic_activity_21<- total_population_economic_activity_21%>%
   summarise(total = sum(total, na.rm = T))%>%
   ungroup()
 
+# Calculate total population size by economic activity
+total_population_economic_activity_21<- total_population_economic_activity_age_21%>%
+  group_by(economic_activity)%>%
+  summarise(total = sum(total, na.rm = T))%>%
+  ungroup()
 
+# Calculate raw proportion providing unpaid care by economic acitivity
+df_economic_activity_21<- left_join(df_economic_activity_21, total_population_economic_activity_21, by = "economic_activity")
+
+df_economic_activity_21<- df_economic_activity_21%>%
+  mutate(proportion = 100*n/total)
+
+economic_activity_rates<- df_economic_activity_21%>%
+  group_by(economic_activity)%>%
+  filter(!care %in% c("Does not apply", "Provides no unpaid care"))%>%
+  summarise(proportion = sum(proportion, na.rm = T))%>%
+  ungroup()
 
 # Calculate age-standardised rates by economic activity
-economic_activity_rates<- age_standardise_indirect(interest_counts = df_economic_activity_21, interest_age_specific_population = total_population_economic_activity_21, standard_age_specific_counts = standard_counts, standard_age_specific_population = standard_age_population, count_variable = n, population_variable = total, age_variable = age, interest_grouping_variable = economic_activity, sum_counts_across = care, exclude_counts = c("Does not apply", "Provides no unpaid care"))
+economic_activity_age_standardised_rates<- age_standardise_indirect(interest_counts = df_economic_activity_21, interest_age_specific_population = total_population_economic_activity_age_21, standard_age_specific_counts = standard_counts, standard_age_specific_population = standard_age_population, count_variable = n, population_variable = total, age_variable = age, interest_grouping_variable = economic_activity, sum_counts_across = care, exclude_counts = c("Does not apply", "Provides no unpaid care"))
+
+# Join raw and age-standardised rates
+economic_activity_rates<- left_join(economic_activity_rates, economic_activity_age_standardised_rates, by = "economic_activity")%>%
+  select(economic_activity, n, proportion, age_standardised_rate)
 
 # Re-order activity categories
 economic_activity_rates<- economic_activity_rates%>%
@@ -240,6 +309,7 @@ p3<- economic_activity_rates%>%
 
 ggsave(plot = p3, filename = "Plots/Age-Standardised Caring Rates by Economic Activity 2021.png", units = "in", width = 9, height = 5, dpi = 1000)
 
+# Save raw and age-standardised rates by economic activity
 save(economic_activity_rates, file = "Rates Data/Economic Activity 2021 Rates.Rda")
 
 
@@ -251,9 +321,6 @@ load("Plots/GGPlot Object Age-Standardised Caring Rates by Ethnicity 2021.Rda")
 p4<- p
 rm(p)
 
-# Align the four plots
-aligned_plots<- align_patches(p1, p2, p3, p4)
-
 # Remove the individual plot subtitles, captions etc.
 merged_plot_labs_theme<- theme(plot.title = ggtext::element_textbox_simple(size = rel(1.2), margin = margin(10,0,10,0), halign = 0.5),
                                plot.title.position = "panel",
@@ -262,7 +329,7 @@ merged_plot_labs_theme<- theme(plot.title = ggtext::element_textbox_simple(size 
 
 # Add relevant titles and layout etc.
 aligned_plots<- (p1 + labs(title = "NS-SEC") + p2 + labs(title = "Education") + p3 + labs(title = "Economic Activity") + p4 + labs(title = "Ethnicity")) & merged_plot_labs_theme
-aligned_plots<- aligned_plots + plot_layout(ncol = 1, heights = c(1, 1, 1, 2))
+aligned_plots<- aligned_plots + plot_layout(ncol = 1, heights = c(1.5, 1, 1, 2))
 aligned_plots<- aligned_plots + plot_annotation(title = "Age-Standardised Unpaid Caring Rates across Socio-Demographic Variables: 2021", subtitle = "Rates standardised to the 2021 general population", caption = "Source: England and Wales Census 2021", theme = thm + theme(plot.title.position = "plot", plot.title = ggtext::element_textbox_simple(size = rel(1.5), margin = margin(10,0,10,0))))
 
 # Save merged plot

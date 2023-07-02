@@ -114,6 +114,8 @@ population_pyramid(age = age, side = sex, left = "Male", count = proportion, lin
 
 ggsave("Plots/Proportion Providing Unpaid Care by Age and Sex 2021.png", unit = "in", height = 5, width = 9, dpi = 1000)
 
+# Save rates by age and sex
+save(df_total_age_sex_21, file = "Rates Data/Age Sex 2021 Rates.Rda")
 
 # Calculate overall rates by sex (both for overall provision and for provision split by hours)
 df_age_sex_21<- left_join(df_age_sex_21, total_population_age_sex_21%>%
@@ -298,9 +300,18 @@ p<- ethnicity_rates%>%
     thm+
     labs(x = "Age-Standardised Caring Rate", title = "Age-Standardised Caring Rate by Ethnicity: 2021", subtitle = "Rates indirectly standardised to the 2021 England and Wales general population", caption = "Source: England and Wales Census 2021")
 
+p
+
 ggsave(plot = p, "Plots/Age-Standardised Caring Rates by Ethnicity 2021.png", units = "in", width = 9, height = 5, dpi = 1000)
 
 save(p, file = "Plots/GGPlot Object Age-Standardised Caring Rates by Ethnicity 2021.Rda")
+
+
+# Join the raw proportions to the age-standardised rates and save
+
+ethnicity_rates<- left_join(ethnicity_rates, df_total_ethnicity_21%>%
+                              filter(care == "Provides unpaid care")%>%
+                              select(ethnicity, total_population, proportion), by = "ethnicity")
 
 save(ethnicity_rates, file = "Rates Data/Ethnicity 2021 Rates.Rda")
 
