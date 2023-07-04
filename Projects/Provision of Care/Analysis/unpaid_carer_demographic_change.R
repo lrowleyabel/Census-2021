@@ -272,6 +272,20 @@ ethnicity_rates%>%
 
 ggsave(filename = "Plots/Proportion Providing Unpaid Care by Ethnicity 2021 and 2011.png", units = "in", width = 9, height = 5, dpi = 1000)
 
+ethnicity_rates%>%
+  filter(ethnicity != "Roma")%>%
+  mutate(change = proportion - proportion_11)%>%
+  mutate(ethnicity = forcats::fct_reorder(ethnicity, change))%>%
+  ggplot()+
+  geom_col(aes(x = change, y = ethnicity), fill = pal[1], width = 0.75, linewidth = 0.5, color = "black")+
+  scale_fill_manual(values = pal, name = "Year")+
+  thm+
+  labs(x = "Change in Proportion Providing Unpaid Care (%)", title = "Change in Proportion Providing Unpaid Care by Ethnicity: 2011 to 2021", caption = "No 2011 data for Roma ethnic group. Source: England and Wales Census 2021 and 2011.")
+
+ggsave(filename = "Plots/Change in Proportion Providing Unpaid Care by Ethnicity 2021 and 2011.png", units = "in", width = 9, height = 5, dpi = 1000)
+
+
+
 # Plot change in age-standardised rates
 
 ethnicity_rates%>%
