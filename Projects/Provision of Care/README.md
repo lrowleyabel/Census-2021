@@ -57,19 +57,11 @@ The below plot shows the observed change in the count of unpaid carers between 2
 
 ### Step 3: Provision of Unpaid Care Rates by Subpopulation
 
-The below plot shows the raw proportion of men and women in each age group providing unpaid care. The heavy skew towards women taking on this work is visible, particularly in middle age. The higher proportion for the oldest men compared to the oldest women is in part driven by the fact that the male population over 85 is smaller than the female population - this can be seen in the second plot below, which compared the age-sex structure of the unpaid carer population with the general population.
+The below plot shows the raw proportion of men and women in each age group providing unpaid care. The skew towards women taking on this work is visible, particularly in middle age.
 
 <div style="width: 100%; padding-top: 10px;">
 
 <img src="Analysis/Plots/Proportion Providing Unpaid Care by Age and Sex 2021.png" style="width: 100%;" alt="Click to see the source">
-
-</div>
-
-<br>
-
-<div style="width: 100%; padding-top: 10px;">
-
-<img src="Analysis/Plots/Age-Sex Structure of Unpaid Carers Compared to General Population 2021.png" style="width: 100%;" alt="Click to see the source">
 
 </div>
 
@@ -84,9 +76,11 @@ The below plots shows the age-standardised caring rates across various socio-dem
 </div>
 
 
-### Step 3: Change in Provision of Unpaid Care across Subpopulations
+### Step 4: Change in Provision of Unpaid Care across Subpopulations
 
-The below plots show how the raw proportions providing unpaid care have changed across age-sex groups and ethnic groups between 2011 and 2021.
+Although overall the rates of unpaid care provision have decreased, this decrease is not evenly spread across the population. For this reason, the below looks at how the rate has changed within different subpopulations.
+
+Firstly, we can simply look at how the raw proportions providing unpaid care have changed across age-sex groups and ethnic groups between 2011 and 2021.
 
 <div style="width: 100%; padding-top: 10px;">
 
@@ -100,9 +94,27 @@ The below plots show how the raw proportions providing unpaid care have changed 
 
 </div>
 
-While for almost every ethnic group, the raw proportion providing unpaid care has decreased over the last decade, for some groups it has decreased more than others - namely, White British and South Asian ethnicities.
+But we can also think about whether these different changes in the raw proportions have led to unpaid care being spread more or less evenly across these subpopulations.
 
-The below plot looks at the change in the age-standardised rate by ethnicity, between 2011 and 2021. Some ethnicities - Gypsy/Irish travellers and some mixed ethnic groups - have become more strongly associated with providing unpaid care over the last decade, in that their rates have become even more elevated compared to the general population. On the other hand, the rates of providing care for Pakistani and Bangladeshi individuals have moved towards being more in line with the general population of the last decade, though they still experience higher than average rates. Notably, Indian individuals have gone from being slightly more likely to provide unpaid care than the general population to slightly less likely.  
+The below shows how the provision of unpaid care has become even more gendered over the last decade. In 2011, women had a higher odds than men of providing unpaid care, but in 2021 that difference became even bigger.
+
+<div style="width: 100%; padding-top: 10px;">
+
+<img src="Analysis/Plots/Odds Ratio for Providing Unpaid Care by Sex 2021 and 2011.png" style="width: 100%;" alt="Click to see the source">
+
+</div>
+
+On the other hand, unpaid care provision has become more evenly spread across age groups, with those in later middle age having less elevated odds of providing unpaid care.
+
+<div style="width: 100%; padding-top: 10px;">
+
+<img src="Analysis/Plots/Odds Ratios for Providing Unpaid Care by Age Group 2021 and 2011.png" style="width: 100%;" alt="Click to see the source">
+
+</div>
+
+
+  
+We can also consider how the distribution of unpaid care across ethnicities. However, instead of looking at odds ratios, we can use indirectly age-standardised rates in order to control for the differences in ethnic groups' age structures. Some ethnicities - Gypsy/Irish travellers and some mixed ethnic groups - have become more strongly associated with providing unpaid care over the last decade, in that their rates have become even more elevated compared to the general population. On the other hand, the rates of providing care for Pakistani and Bangladeshi individuals have moved towards being more in line with the general population of the last decade, though they still experience higher than average rates. Notably, Indian individuals have gone from being slightly more likely to provide unpaid care than the general population to slightly less likely.  
 
 <div style="width: 100%; padding-top: 10px;">
 

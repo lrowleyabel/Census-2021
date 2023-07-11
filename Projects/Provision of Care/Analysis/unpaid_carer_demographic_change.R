@@ -39,9 +39,6 @@ df_age_sex_11<- nomis_get_data(id = id, geography = "TYPE499", C_CARER = 2, C_AG
 
 # Get 2011 total population by age and sex from Nomis API
 id<- nomis_search(name = "*LC1117EW*")$id[1]
-nomis_get_metadata(id = id)
-nomis_codelist(id = id, concept = "C_SEX")%>%
-  print(n = 100)
 
 total_age_sex_population_11<- nomis_get_data(id = id, geography = "TYPE499", C_SEX = 1:2, C_AGE = 1:39, tidy = T)%>%
   filter(geography_name == "England and Wales")%>%
@@ -78,8 +75,12 @@ load("Rates Data/Age Sex 2021 Rates.Rda")
 # Join 2011 and 2021 rates
 age_sex_rates<- left_join(df_age_sex_11%>%
                             mutate(sex = str_remove(sex, "(?<=ale)s"))%>%
-                            rename(proportion_11 = proportion), df_total_age_sex_21%>%
-                                                                  filter(care == "Provides unpaid care"), by = c("age", "sex"))
+                            rename(proportion_11 = proportion,
+                                   n_11 = n,
+                                   total_population_11 = total)%>%
+                            select(-care), df_total_age_sex_21%>%
+                                            filter(care == "Provides unpaid care")%>%
+                                            select(-care), by = c("age", "sex"))
 
 # Plot change in raw rates by age and sex
 
@@ -124,6 +125,150 @@ age_sex_rates%>%
 ggsave(filename = "Plots/Change in Proportion Providing Unpaid Care by Age and Sex 2021 and 2011.png", units = "in", width = 9, height = 5, dpi = 1000)
 
   
+# Plot change in raw proportions by sex
+
+sex_rates<- age_sex_rates%>%
+  group_by(sex)%>%
+  summarise(n_11 = sum(n_11, na.rm = T),
+            total_population_11 = sum(total_population_11, na.rm = T),
+            n = sum(n, na.rm = T),
+            total_population = sum(total_population, na.rm = T))%>%
+  ungroup()%>%
+  mutate(proportion_11 = 100*n_11/total_population_11,
+         proportion = 100*n/total_population)
+
+ggplot(sex_rates)+
+  geom_col(aes(x = proportion-proportion_11, y = sex, fill = sex), width = 0.5)+
+  geom_vline(xintercept = 0)+
+  thm+
+  scale_fill_manual(values = pal)+
+  scale_x_continuous(limits = c(-3, 1))+
+  labs(x = "Change in raw proportion providing unpaid care (%)", title = "Change in Raw Proportion Providing Unpaid Care by Gender: 2011 to 2021")
+
+# Calculate change in odds ratio of women vs men providing unpaid care
+sex_rates<- sex_rates%>%
+  mutate(n_non_carers_11 = total_population_11 - n_11,
+         n_non_carers = total_population - n)
+
+or<- function(data, group, event_count, non_event_count, reverse_reference_group = FALSE){
+  
+  if (reverse_reference_group){
+    
+    groups<- rev(data[[substitute(group)]])
+    
+    a<- data[[substitute(event_count)]][2]
+    b<- data[[substitute(non_event_count)]][2]
+    c<- data[[substitute(event_count)]][1]
+    d<- data[[substitute(non_event_count)]][1]  
+    
+  } else {
+    
+    groups<- data[[substitute(group)]]
+    
+    a<- data[[substitute(event_count)]][1]
+    b<- data[[substitute(non_event_count)]][1]
+    c<- data[[substitute(event_count)]][2]
+    d<- data[[substitute(non_event_count)]][2]
+    
+  }
+  
+  or<- (a/c)/(b/d)
+  
+  cat(paste("Odds ratio for", groups[1], "vs", groups[2], ":", round(or, 3), "\n"))
+  
+  return(or)
+  
+}
+
+
+# Odds ratio for 2011
+sex_or_11<- or(sex_rates, sex, n_11, n_non_carers_11)
+
+sex_or_21<- or(sex_rates, sex, n, n_non_carers, reverse_reference_group = F)
+
+ggplot()+
+  geom_vline(xintercept = 1, linetype = 2)+
+  geom_segment(aes(x = sex_or_11, xend = sex_or_21, y = "Women", yend = "Women"))+
+  geom_point(aes(x = sex_or_11, y = "Women", fill = "2011"), shape = 21, size = 3)+
+  geom_point(aes(x = sex_or_21, y = "Women", fill = "2021"), shape = 21, size = 3)+
+  geom_point(aes(x = 1, y = "Men"), shape = 21, size = 3, fill = "black")+
+  thm+
+  scale_x_continuous(limits = c(0.5, 1.5), breaks = seq(0.5,1.5,0.25))+
+  scale_fill_manual(values = pal, name = "Year")+
+  labs(x = "Odds ratio (reference group: men)", title = "Odds Ratio for Providing Unpaid Care by Sex: 2021 and 2011", subtitle = "Odds of women compared to odds of men", caption = "Source: England and Wales 2021 and 2011")
+  
+ggsave(filename = "Plots/Odds Ratio for Providing Unpaid Care by Sex 2021 and 2011.png", units = "in", height = 5, width = 9, dpi = 1000)
+
+# Plot change in raw proportions by age group
+age_rates<- age_sex_rates%>%
+  group_by(age)%>%
+  summarise(n_11 = sum(n_11, na.rm = T),
+                            total_population_11 = sum(total_population_11, na.rm = T),
+                            n = sum(n, na.rm = T),
+                            total_population = sum(total_population, na.rm = T))%>%
+  ungroup()%>%
+  mutate(proportion_11 = 100*n_11/total_population_11,
+         proportion = 100*n/total_population)
+age_rates%>%
+  mutate(age = order_age_groups(age))%>%
+ggplot()+
+  geom_col(aes(x = proportion-proportion_11, y = age), width = 0.5)+
+  geom_vline(xintercept = 0)+
+  thm+
+  scale_fill_manual(values = pal)+
+  labs(x = "Change in raw proportion providing unpaid care (%)", title = "Change in Raw Proportion Providing Unpaid Care by Age Group: 2011 to 2021")
+
+
+# Calculate change odds ratios of each age group vs those aged 20 - 24
+
+age_rates<- age_rates%>%
+  mutate(age = order_age_groups(age))
+
+age_rates<- age_rates%>%
+  mutate(n_non_carers_11 = total_population_11 - n_11,
+         n_non_carers = total_population - n)
+
+age_or_11<- lapply(levels(age_rates$age), function(a){
+  
+  age_rates%>%
+    filter(age %in% c(a, "Aged 40 to 44 years"))%>%
+    mutate(age = factor(age, levels = unique(c(a, "Aged 40 to 44 years"))))%>%
+    arrange(age)%>%
+    or(age, n_11, n_non_carers_11)
+  
+})
+
+
+age_or_21<- lapply(levels(age_rates$age), function(a){
+  
+  age_rates%>%
+    filter(age %in% c(a, "Aged 40 to 44 years"))%>%
+    mutate(age = factor(age, levels = unique(c(a, "Aged 50 to 54 years"))))%>%
+    arrange(age)%>%
+    or(age, n, n_non_carers)
+  
+})
+
+age_ors<- data.frame(age = levels(age_rates$age), or_11 = unlist(age_or_11), or_21 = unlist(age_or_21))%>%
+  mutate(age = order_age_groups(age))
+
+age_ors%>%
+  mutate(age = str_remove(age, "Aged "))%>%
+  mutate(age = order_age_groups(age))%>%
+ggplot()+
+  geom_segment(aes(x = or_11, xend = or_21, y = age, yend = age))+
+  geom_point(aes(x = or_11, y = age, fill = "2011"), shape = 21, size = 2)+
+  geom_point(aes(x = or_21, y = age, fill = "2021"), shape = 21, size = 2)+
+  geom_point(aes(x = 1, y = "40 to 44 years"), shape = 21, size = 2, fill = "black")+
+  geom_vline(xintercept = 1, linetype = 2)+
+  thm+
+  scale_fill_manual(values = pal, name = "Year")+
+  labs(x = "Odds ratio (reference group: people aged 40 - 44 years)", title = "Odds Ratios for Providing Unpaid Care by Age Group: 2021 and 2011", subtitle = "Odds of each age group compared to odds of people aged 40 - 44 years", caption = "Sources: England and Wales Census 2021 and 2011")
+
+ggsave(filename = "Plots/Odds Ratios for Providing Unpaid Care by Age Group 2021 and 2011.png", units = "in", width = 9, height = 5, dpi = 1000)
+
+
+
 #### STEP 2: ETHNICITY ####
 
 
@@ -298,6 +443,6 @@ ethnicity_rates%>%
   scale_x_continuous(limits = c(0.38,1.62), breaks = seq(0.4,1.6,0.2))+
   scale_fill_manual(values = pal, name = "Year")+
   thm+
-  labs(x = "Age-Standardised Caring Rate", title = "Age-Standardised Caring Rate by Ethnicity: 2021", subtitle = "Rates indirectly standardised to the 2021 England and Wales general population", caption = "No 2011 rate for Roma ethnic group. Source: England and Wales Census 2021 and 2011.")
+  labs(x = "Age-Standardised Caring Rate", title = "Age-Standardised Caring Rate by Ethnicity: 2021", subtitle = "Rates indirectly standardised to the England and Wales general population in 2011 and 2021", caption = "No 2011 rate for Roma ethnic group. Source: England and Wales Census 2021 and 2011.")
 
 ggsave(filename = "Plots/Age-Standardised Caring Rate by Ethnicity 2021 and 2011.png", units = "in", width = 9, height = 5, dpi = 1000)
