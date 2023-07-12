@@ -6,15 +6,15 @@ This project looks at who is providing unpaid care in 2021 according to the Engl
 ### Workflow:
 
   - Step 1: Calculate raw proportions and age-standardised rates of provision of unpaid care in 2021 and 2011 in England and Wales:
-    - [provision_of_unpaid_care_rates_indirect_standardisation.R](Analysis/Overall Analysis/provision_of_unpaid_care_rates_indirect_standardisation.R)
+    - [provision_of_unpaid_care_rates_indirect_standardisation.R](Analysis/Overall%20Analysis/provision_of_unpaid_care_rates_indirect_standardisation.R)
   - Step 2: Decompose unpaid carer count change into population growth, ageing and underlying rate change for the change between 2011 and 2021 in England and Wales:
-    - [unpaid_carer_change_decomposition.R](Analysis/Overall Analysis/unpaid_carer_change_decomposition.R)
+    - [unpaid_carer_change_decomposition.R](Analysis/Overall%20Analysis/unpaid_carer_change_decomposition.R)
   - Step 3: Calculate rates for 2021 across socio-demographic subpopulations in England and Wales:
-    - [unpaid_carer_demographic_profile.R](Analysis/Overall Analysis/unpaid_carer_demographic_profile.R)
-    - [unpaid_carer_socioeconomic_profile.R](Analysis/Overall Analysis/unpaid_carer_socioeconomic_profile.R)
+    - [unpaid_carer_demographic_profile.R](Analysis/Overall%20Analysis/unpaid_carer_demographic_profile.R)
+    - [unpaid_carer_socioeconomic_profile.R](Analysis/Overall%20Analysis/unpaid_carer_socioeconomic_profile.R)
   - Step 4: Calculate change between 2011 and 2021 in rates across socio-demographic subpopulations in England and Wales:
-    - [unpaid_carer_demographic_change.R](Analysis/Overall Analysis/unpaid_carer_demographic_change.R)
-    - [unpaid_carer_socioeconomic_change.R](Analysis/Overall Analysis/unpaid_carer_socioeconomic_change.R)
+    - [unpaid_carer_demographic_change.R](Analysis/Overall%20Analysis/unpaid_carer_demographic_change.R)
+    - [unpaid_carer_socioeconomic_change.R](Analysis/Overall%20Analysis/unpaid_carer_socioeconomic_change.R)
   - Step 5: Calculate age-standardised rate in 2021 for each LSOA
   - Step 6: Model the LSOA age-standardised rates
 
