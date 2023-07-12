@@ -130,16 +130,16 @@ We can also consider how the distribution of unpaid care across ethnicities. How
 The amount of unpaid care being provided also varies geographically. The below maps the proportion of the population providing unpaid care in each LSOA (small neighbourhoods) for 2021.
 
 <div style="width: 100%; padding-top: 20px; padding-bottom: 20px">
-<div style ="width: 60%; margin: auto;">
-<img src="Analysis/Geographic Analysis/Plots/Proportion Providing Unpaid Care by LSOA 2021.png" style="width: 100%;" alt="Click to see the source">
-</div>
+
+<img src="Analysis/Geographic Analysis/Plots/Proportion Providing Unpaid Care by LSOA 2021.png" style="width: 60%;" alt="Click to see the source">
+
 </div>
 
 In order to look at the change between 2011 and 2021 in each neighbourhood, we can look at the rate of care provision in an area indirectly age-standardised to the age structure of that area's 2011 population.
 
 
 <div style="width: 100%; padding-top: 20px; padding-bottom: 20px;">
-<div style ="width: 60%; margin: auto;">
-<img src="Analysis/Geographic Analysis/Plots/Age-Standardised Unpaid Care Provision Rates by LSOA 2021.png" style="width: 100%;" alt="Click to see the source">
-</div>
+
+<img src="Analysis/Geographic Analysis/Plots/Age-Standardised Unpaid Care Provision Rates by LSOA 2021.png" style="width: 60%;" alt="Click to see the source">
+
 </div>
