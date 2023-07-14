@@ -90,6 +90,8 @@ df_11<- nomis_get_data(id = id, geography = "TYPE298", C_CARER = c(0,2), C_AGE =
   rename(lsoa11cd = geography_code,
          care = c_carer_name,
          n = obs_value)
+nomis_get_metadata(id)
+nomis_codelist(id, "C_CARER")
 
 # Pivot to wide format so that total population is a separate variable
 df_11<- df_11%>%
@@ -228,23 +230,18 @@ standard_age_population<- standard_age_population%>%
 standard_age_counts<- standard_age_counts%>%
   mutate(age = collapse_age_groups(age, unique(interest_age_population$age)))
 
-age_standardised_rates<- lapply(unique(df$lsoa21cd), function(x){
-  
-  age_standardised_rate<- age_standardise_indirect(interest_counts = filter(interest_counts, lsoa21cd == x),
-                                                    interest_age_specific_population = filter(interest_age_population, lsoa21cd == x),
-                                                    standard_age_specific_counts = filter(standard_age_counts, lsoa21cd == x),
-                                                    standard_age_specific_population = filter(standard_age_population, lsoa21cd == x),
-                                                    count_variable = n,
-                                                    population_variable = total,
-                                                    age_variable = age)
-  
-  return(age_standardised_rate%>%
-           mutate(lsoa21cd = x))
-  
-  
-})
+age_standardised_rates<- age_standardise_indirect(interest_counts = interest_counts,
+                                                  interest_age_specific_population = interest_age_population,
+                                                  standard_age_specific_counts = standard_age_counts,
+                                                  standard_age_specific_population = standard_age_population,
+                                                  count_variable = n,
+                                                  population_variable = total,
+                                                  age_variable = age,
+                                                  grouping_variable = lsoa21cd,
+                                                  single_standard_population = F)
 
-age_standardised_rates<- bind_rows(age_standardised_rates)
+new_rates<- age_standardised_rates
+
 
 # Plot distribution of age-standardised rates
 ggplot(age_standardised_rates)+

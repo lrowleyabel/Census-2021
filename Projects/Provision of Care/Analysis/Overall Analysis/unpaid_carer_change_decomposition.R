@@ -20,9 +20,6 @@ rm(list = ls())
 
 # 2011 age-specific population
 id<- nomis_search(name = "*LC1117EW*")$id[1]
-nomis_get_metadata(id = id)
-nomis_codelist(id = id, concept = "C_AGE")%>%
-  print(n = 100)
 
 df_age_11<- nomis_get_data(id = id, geography = "TYPE499", sex = 0, C_AGE = 1:39, tidy = T)%>%
   filter(geography_name == "England and Wales")%>%
@@ -115,7 +112,7 @@ ggplot(comps)+
   thm+
   theme(legend.position = "none")+
   scale_fill_manual(values = pal)+
-  scale_x_continuous(labels = function(x){format(x, scientific = F, trim = T, big.mark = ",")}, limits = c(-10000000,10000000))+
+  scale_x_continuous(labels = function(x){format(x, scientific = F, trim = T, big.mark = ",")}, limits = c(-1500000,500000))+
   labs(x = "Change in count of unpaid carers", title = "Components of Observed Change in Count of Unpaid Carers: 2011 to 2021", caption = "Source: England and Wales Census 2011 and 2021")
 
 ggsave("Plots/Components of Observed Change in Count of Unpaid Carers.png", units = "in", width = 9, height = 5, dpi = 1000)

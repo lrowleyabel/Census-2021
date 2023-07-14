@@ -46,9 +46,11 @@ In order to account for the underlying change in the population's age structure 
 
 The below plot shows the observed change in the count of unpaid carers between 2011 and 2021 and then breaks it down into the following components:
 
-  - **Population growth component**: the change in the count that we would expect to see from the overall change in the size of the population.
-  - **Population ageing component**: the change in the count that we would expect to see from the change in the age structure of the population.
-  - **Rate change component**: the change in the count that is attributable to a change in the underlying likelihood of the event occurring, independent of population growth and ageing.
+  - **Population growth component**: the change in the count of unpaid carers that we would expect to see from the overall change in the size of the population.
+  - **Population ageing component**: the change in the count of unpaid carers that we would expect to see from the change in the age structure of the population.
+  - **Rate change component**: the change in the count of unpaid carers that is attributable to a change in the underlying likelihood of providing unpaid care, independent of population growth and ageing.
+
+The rate change component is about -1.3 million, meaning there are approximately 1.3 million fewer unpaid carers in 2021 than we would expect given population growth and ageing.
 
 <div style="width: 100%; padding-top: 20px; padding-bottom: 20px;">
 
