@@ -15,9 +15,10 @@ This project looks at who is providing unpaid care in 2021 according to the Engl
   - Step 4: Calculate change between 2011 and 2021 in rates across socio-demographic subpopulations in England and Wales:
     - [unpaid_carer_demographic_change.R](Analysis/Overall%20Analysis/unpaid_carer_demographic_change.R)
     - [unpaid_carer_socioeconomic_change.R](Analysis/Overall%20Analysis/unpaid_carer_socioeconomic_change.R)
-  - Step 5: Calculate age-standardised rate in 2021 for each LSOA:
+  - Step 5: Model age-standardised rates across gepgraphic areas:
+    - [local_authority_spending_analysis.R](Analysis/Geographic%20Analysis/local_authority_spending_analysis.R)
     - [unpaid_carer_lsoa_rates.R](Analysis/Geographic%20Analysis/unpaid_carer_lsoa_rates.R)
-  - Step 6: Model the LSOA age-standardised rates
+    - [preparing_lsoa_model_independent_variables.R](Analysis/Geographic%20Analysis/preparing_lsoa_model_independent_variables.R)
 
 
 **_As the project progresses, I will add plots and a brief write-up of the output. This output will form the basis for a report._**
